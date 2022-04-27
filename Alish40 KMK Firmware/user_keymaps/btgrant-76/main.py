@@ -2,7 +2,7 @@ import board
 
 from kmk.extensions.rgb import AnimationModes, RGB
 from kmk.handlers.sequences import simple_key_sequence
-from kmk.keys import KC
+from kmk.keys import KC, Key
 from kmk.kmk_keyboard import KMKKeyboard
 from kmk.modules.layers import Layers
 from kmk.scanners import DiodeOrientation
@@ -29,6 +29,7 @@ rgb_ext = RGB(
 )
 keyboard.extensions.append(rgb_ext)
 
+# Layer indexes
 DEFAULT = 0
 NUMBER = 1
 FUNCTION = 2
@@ -54,25 +55,31 @@ CODE_INSERT = simple_key_sequence((
 ))
 GRAVE_INSERT = simple_key_sequence((KC.GRAVE, KC.GRAVE, KC.LEFT))
 PAREN_INSERT = simple_key_sequence((KC.LPRN, KC.RPRN, KC.LEFT))
+QUOTE_INSERT = simple_key_sequence((KC.DQUO, KC.DQUO, KC.LEFT))
 VIM_COPY = simple_key_sequence((KC.DQT, KC.ASTR, KC.Y))
 
+
 # TODO screen brightness up/down
+# up = 145
+# down = 144
+# (226, ('AUDIO_MUTE', 'MUTE'))
+SCREEN_UP = Key(145)  # maybe_make_consumer_key('145', 145, 'BR_UP')
+SCREEN_DN = Key(144)  # maybe_make_consumer_key('144', 144, 'BR_DN')
 
 # Modifier Helpers
 BACK = KC.LGUI(KC.LBRC)
 CMD_SFT = KC.LGUI(KC.LSFT)
 FORWARD = KC.LGUI(KC.RBRC)
 IDEA_TERM = KC.RALT(KC.F12)
-SCREENSHOT_CLIP = KC.LGUI(KC.LCTL(KC.LSFT(KC.N4)))  # SCRN_CLIP
-SCREENSHOT_FILE = KC.LGUI(KC.LSFT(KC.N4))  # SCRN_FILE
-
+SCREEN2CLIP = KC.LGUI(KC.LCTL(KC.LSFT(KC.N4)))
+SCREEN2FILE = KC.LGUI(KC.LSFT(KC.N4))
 
 keyboard.keymap = [
     # 0:  Qwerty
     # ,-----------------------------------------------------------------------------------.
     # | Tab  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
     # |------+------+------+------+------+-------------+------+------+------+------+------|
-    # |Esc M1|   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   '  | Enter|
+    # |Esc M1|   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  | ' "  |  ; : |
     # |------+------+------+------+------+------+------+------+------+------+------+------|
     # | Shift|   Z  |   X  |   C  |   V  |   B  |EX_NUM|   N  |   M  |   ,  |   .  |   /  |
     # |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -92,7 +99,7 @@ keyboard.keymap = [
     # |------+------+------+------+------+------+------+------+------+------+------+------|
     # |      |Vol Dn|      |Trck B|Trck F|      |      |  - _ | = +  |      |      | Enter|
     # |------+------+------+------+------+------+------+------+------+------+------+------|
-    # |      |      |      |      | |||> |      |      | Space|      |      |      |      |
+    # |      |      |      |XXXXXX| |||> |XXXXXX|XXXXXX| Space|XXXXXX|      |      |      |
     # `-----------------------------------------------------------------------------------'
     [
         KC.GRAVE, KC.N1, KC.N2, KC.N3, KC.N4, KC.N5, KC.N6, KC.N7, KC.N8, KC.N9, KC.N0, KC.DELETE,
@@ -106,14 +113,14 @@ keyboard.keymap = [
     # |------+------+------+------+------+-------------+------+------+------+------+------|
     # | Caps | F11  | F12  | Back | Frwrd|      | Left |  Up  | Down | Right|      |      |
     # |------+------+------+------+------+------+------+------+------+------+------+------|
-    # |      | [x]  | (x)  | `x`  |      |      |      |      |      |SCRCLP|SCRFIL|      |
+    # |      | [x]  | (x)  | "x"  | `x`  | ``x``|      |      |      |SCRN2F|SCRN2C|      |
     # |------+------+------+------+------+------+------+------+------+------+------+------|
-    # |      |      |      |      |      |      |      |      |      |      |      |      |
+    # |      |      |      |XXXXXX|      |XXXXXX|XXXXXX|      |XXXXXX|      |      |      |
     # `-----------------------------------------------------------------------------------'
     [
         KC.ESC, KC.F1, KC.F2, KC.F3, KC.F4, KC.F5, KC.F6, KC.F7, KC.F8, KC.F9, KC.F10, KC.TRNS,
         KC.CAPSLOCK, KC.F11, KC.F12, BACK, FORWARD, KC.TRNS, KC.LEFT, KC.DOWN, KC.UP, KC.RIGHT, KC.TRNS, KC.TRNS,
-        KC.TRNS, BRACE_INSERT, PAREN_INSERT, GRAVE_INSERT, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, SCREENSHOT_CLIP, SCREENSHOT_FILE, KC.TRNS,
+        KC.TRNS, BRACE_INSERT, PAREN_INSERT, QUOTE_INSERT, GRAVE_INSERT, CODE_INSERT, KC.TRNS, _______, _______, SCREEN2FILE, SCREEN2CLIP, KC.TRNS,
         KC.TRNS, KC.TRNS, KC.TRNS, KC.NO, KC.MEDIA_PLAY_PAUSE, KC.NO, KC.NO, KC.SPC, KC.NO, KC.LCTL, KC.LEFT, KC.RGHT,
     ],
     # 3:  Gaming Layer (Left and right space)
@@ -140,7 +147,7 @@ keyboard.keymap = [
     # |------+------+------+------+------+------+------+------+------+------+------+------|
     # |      |   _  |   +  |      |      |      |      |   |  |   \  |   {  |   }  |      |
     # |------+------+------+------+------+------+------+------+------+------+------+------|
-    # |      |      |      |      |      |      |      |      |      |      |      |      |
+    # |      |      |      |XXXXXX|      |XXXXXX|XXXXXX|      |XXXXXX|      |      |      |
     # `-----------------------------------------------------------------------------------'
     [
         KC.TILDE, KC.EXLM, KC.AT, KC.HASH, KC.DOLLAR, KC.PERCENT, KC.CIRC, KC.AMPR, KC.ASTR, KC.LPRN, KC.RPRN, KC.DELETE,
@@ -149,21 +156,23 @@ keyboard.keymap = [
         KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO,
     ],
     # 5:  Experimental Number Layer (Raise Layer)
+    # TODO this layer could still have numbers across the top
+    # TODO:  - + * / = . Enter
     # ,-----------------------------------------------------------------------------------.
-    # |      |      |      |      |      |      |   +  |   7  |   8  |   9  |   *  | Del  |
+    # |      |   1  |   2  |   3  |  4   |  5   |   6  |   7  |   8  |   9  |   0  | Del  |
     # |------+------+------+------+------+-------------+------+------+------+------+------|
-    # |      |      |      |      |      |      |   -  |   4  |   5  |   6  |   /  |  =   |
+    # |      |Vol Up| Mute | Back | Frwrd|      |   /  |   4  |   5  |   6  |   -  |  =   |
     # |------+------+------+------+------+------+------+------+------+------+------+------|
-    # |      |      |      |      |      |      |   0  |   1  |   2  |   3  |   .  | Enter|
+    # |      |Vol Dn|      |Trck B|Trck F|      |   *  |   1  |   2  |   3  |   +  | Enter|
     # |------+------+------+------+------+------+------+------+------+------+------+------|
-    # |      |      |      |      |      |      |      |      |      |      |      |      |
+    # |      |      |      |XXXXXX| |||> |XXXXXX|XXXXXX| Space|XXXXXX|      |      |      |
     # `-----------------------------------------------------------------------------------'
     [
-        KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.N9, KC.NO, KC.NO,
+        KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.PPLS, KC.N7, KC.N8, KC.N9, KC.PSLS, _______,
+        KC.NO, KC.VOLU, KC.MUTE, KC.NO, KC.NO, KC.NO, KC.PMNS, KC.N4, KC.N5, KC.N6, KC.PAST, KC.PENT,
+        KC.NO, KC.VOLD, KC.NO, KC.MRWD, KC.MFFD, KC.NO, KC.NO, KC.N1, KC.N2, KC.N3, KC.PDOT, KC.PEQL,
         KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO,
-        KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO,
-        KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO,
-        KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO, KC.NO,
+        KC.NO, KC.NO, KC.NO, KC.NO, KC.MPLY, KC.NO, KC.NO, KC.SPC, KC.NO, KC.NO, KC.NO, KC.NO,
     ]
 ]
 
